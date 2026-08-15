@@ -34,7 +34,7 @@ struct Order {
 };
 
 struct priceLevel {
-    double price;
+    uint64_t price;
     std::list<Order> orders;
 
     priceLevel(int price) : price(price) {}
@@ -63,7 +63,7 @@ struct Trade {
 
         buyId = buyOrder->id;
         sellId = sellOrder->id;
-        price = sellOrder->price;
+        price = restingOrder.price;
         quantity = quantity_traded;
     }
     
@@ -79,8 +79,8 @@ class OrderBook {
         std::optional<std::list<Order>::iterator> findOrder(uint64_t); 
         bool removeOrder(uint64_t);
         std::vector<priceLevel>::iterator findPriceLevel(std::vector<priceLevel>&, uint64_t price);
-        const std::vector<Trade> getTrades();
-        const std::unordered_map<uint64_t, std::list<Order>::iterator> getOrders();
+        const std::vector<Trade>& getTrades();
+        const std::unordered_map<uint64_t, std::list<Order>::iterator>& getOrders();
 
 
         void printBook(bool) const;

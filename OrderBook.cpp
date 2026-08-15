@@ -1,44 +1,13 @@
 #include "OrderBook.h"
-
 std::vector<priceLevel>::iterator OrderBook::findPriceLevel(std::vector<priceLevel>& levels, uint64_t price_level_to_find) {
-    auto it_price_level = levels.end();
-
-    uint64_t distance_from_front = 0;
-    uint64_t distance_from_back = 0;
-
-    if (!levels.empty()) {
-        distance_from_front = abs(levels.front().price - price_level_to_find);
-        distance_from_back = abs(levels.back().price - price_level_to_find);
-    }
-
-    //I think I could end these searches sooner maybe by checking when the level >< price we are seraching for, lowkey i need to find it for insertion
-
-    if (distance_from_front <= distance_from_back) {
-        it_price_level = std::find_if(levels.begin(), levels.end(), [&](const priceLevel& p) {
-            return p.price >= price_level_to_find;
-
-            //350 - to find
-
-            //360 <- call insert on this spot
-            //340
-            //330
-        });
-    } else {
-        it_price_level = std::find_if(levels.rbegin(), levels.rend(), [&](const priceLevel& p) {
-            return p.price <= price_level_to_find;
-        }).base();
-
-        if (it_price_level != levels.end()) {
-            ++it_price_level;
+    return std::lower_bound(
+        levels.begin(),
+        levels.end(),
+        price_level_to_find,
+        [&](const priceLevel& level, uint64_t price) {
+            return level.price < price;
         }
-        //345 - to find
-
-        //355
-        //350
-        //340 <- we call insert on this
-    }
-
-    return it_price_level;
+    );
 }
 
 void OrderBook::insertOrder(bool BOS, uint64_t p, uint64_t q) {
@@ -234,10 +203,10 @@ uint64_t OrderBook::execute(Order &order1, Order &order2) {
     return quantity_to_remove;
 }
 
-const std::vector<Trade> OrderBook::getTrades() {
+const std::vector<Trade>& OrderBook::getTrades() {
     return trades_;
 }
 
-const std::unordered_map<uint64_t, std::list<Order>::iterator> OrderBook::getOrders() {
+const std::unordered_map<uint64_t, std::list<Order>::iterator>& OrderBook::getOrders() {
     return orderMap_;
 }
