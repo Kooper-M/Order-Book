@@ -1,4 +1,5 @@
-CMakeLists.txt
-CMakePresets.json
 main.cpp
-./build
+/__pycache__
+/build
+.env
+*.pyd
